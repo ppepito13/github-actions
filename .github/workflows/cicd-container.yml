@@ -1,0 +1,63 @@
+name: Oracle-Container-Deploy
+
+# env:
+#   AZURE_WEBAPP_NAME: techsckool  # set this to the name of your Azure Web App
+
+on:
+#   push:
+#     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker container registry
+        uses: docker/login-action@v1.10.0
+        with:
+        #   registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+    #   - name: Lowercase the repo name and username
+    #     run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ppepito13/test_githu_abctions:${{ github.sha }}
+          #tags: demo010.azurecr.io/${{ env.REPO }}:${{ github.sha }}
+          file: ./myapp/Dockerfile
+
+#   deploy:
+#     permissions:
+#       contents: none
+#     runs-on: ubuntu-latest
+#     needs: build
+#     environment:
+#       name: 'Development'
+#       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+#     steps:
+#       - name: Lowercase the repo name and username
+#         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
+#       - name: Deploy to Azure Web App
+#         id: deploy-to-webapp
+#         uses: azure/webapps-deploy@v2
+#         with:
+#           app-name: ${{ env.AZURE_WEBAPP_NAME }}
+#           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+#           images: 'demo010.azurecr.io/${{ env.REPO }}:${{ github.sha }}'
