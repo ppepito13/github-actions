@@ -37,7 +37,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ppepito13/test_githu_abctions:${{ github.sha }}
+          tags: ppepito13/test_github_abctions:${{ github.sha }}
           #tags: demo010.azurecr.io/${{ env.REPO }}:${{ github.sha }}
           file: ./myapp/Dockerfile
 
